@@ -1,53 +1,54 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
 export default function AlertSystem({ petData, selectedPet }) {
   const [alerts, setAlerts] = useState([]);
 
-  useEffect(() => {
-    if (petData && petData.length > 0) {
-      checkAlerts(petData[0]);
-    }
-  }, [petData]);
+  // Sử dụng useCallback để memoize hàm checkAlerts
+  const checkAlerts = useCallback(
+    (latestData) => {
+      const newAlerts = [];
 
-  const checkAlerts = (latestData) => {
-    const newAlerts = [];
-
-    if (latestData.batteryLevel < 20) {
-      newAlerts.push({
-        type: "battery",
-        message: `Pin thấp: ${latestData.batteryLevel}%`,
-        level: "warning",
-      });
-    }
-
-    const safeZoneCenter = [10.8231, 106.6297];
-    const distance = calculateDistance(
-      safeZoneCenter[0],
-      safeZoneCenter[1],
-      latestData.latitude,
-      latestData.longitude
-    );
-
-    if (distance > 0.5) {
-      newAlerts.push({
-        type: "location",
-        message: "Pet ra khỏi vùng an toàn!",
-        level: "danger",
-      });
-    }
-
-    newAlerts.forEach((alert) => {
-      if (
-        !alerts.find(
-          (a) => a.type === alert.type && a.message === alert.message
-        )
-      ) {
-        toast[alert.level === "danger" ? "error" : "warning"](alert.message);
-        setAlerts((prev) => [...prev, { ...alert, id: Date.now() }]);
+      // Kiểm tra pin yếu
+      if (latestData.batteryLevel < 20) {
+        newAlerts.push({
+          type: "battery",
+          message: `Pin thấp: ${latestData.batteryLevel}%`,
+          level: "warning",
+        });
       }
-    });
-  };
+
+      // Kiểm tra vùng an toàn
+      const safeZoneCenter = [10.8231, 106.6297];
+      const distance = calculateDistance(
+        safeZoneCenter[0],
+        safeZoneCenter[1],
+        latestData.latitude,
+        latestData.longitude
+      );
+
+      if (distance > 0.5) {
+        newAlerts.push({
+          type: "location",
+          message: "Pet ra khỏi vùng an toàn!",
+          level: "danger",
+        });
+      }
+
+      // Hiển thị alert mới
+      newAlerts.forEach((alert) => {
+        if (
+          !alerts.find(
+            (a) => a.type === alert.type && a.message === alert.message
+          )
+        ) {
+          toast[alert.level === "danger" ? "error" : "warning"](alert.message);
+          setAlerts((prev) => [...prev, { ...alert, id: Date.now() }]);
+        }
+      });
+    },
+    [alerts]
+  );
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
@@ -67,77 +68,43 @@ export default function AlertSystem({ petData, selectedPet }) {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
   };
 
+  useEffect(() => {
+    if (petData && petData.length > 0) {
+      checkAlerts(petData[0]);
+    }
+  }, [petData, checkAlerts]); // Thêm checkAlerts vào dependency
+
   return (
-    <div
-      style={{
-        backgroundColor: "white",
-        borderRadius: "8px",
-        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
-        padding: "24px",
-      }}
-    >
-      <h2
-        style={{
-          fontSize: "24px",
-          fontWeight: "bold",
-          color: "#1f2937",
-          marginBottom: "16px",
-        }}
-      >
-        🚨 Thông báo
-      </h2>
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">🚨 Thông báo</h2>
 
       {alerts.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "32px", color: "#6b7280" }}>
-          <div style={{ fontSize: "48px", marginBottom: "8px" }}>✅</div>
-          <p style={{ margin: 0 }}>Không có cảnh báo nào</p>
-          <p style={{ margin: 0, fontSize: "14px" }}>Mọi thứ đều ổn định</p>
+        <div className="text-center py-8 text-gray-500">
+          <div className="text-4xl mb-2">✅</div>
+          <p>Không có cảnh báo nào</p>
+          <p className="text-sm">Mọi thứ đều ổn định</p>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div className="space-y-3">
           {alerts.map((alert) => (
             <div
               key={alert.id}
-              style={{
-                padding: "16px",
-                borderRadius: "8px",
-                borderLeft: `4px solid ${
-                  alert.level === "danger" ? "#ef4444" : "#f59e0b"
-                }`,
-                backgroundColor:
-                  alert.level === "danger" ? "#fef2f2" : "#fffbeb",
-              }}
+              className={`p-4 rounded-lg border-l-4 ${
+                alert.level === "danger"
+                  ? "bg-red-50 border-red-500"
+                  : "bg-yellow-50 border-yellow-500"
+              }`}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
+              <div className="flex justify-between items-center">
                 <div>
-                  <p style={{ fontWeight: "600", margin: 0 }}>
-                    {alert.message}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "12px",
-                      color: "#6b7280",
-                      margin: "4px 0 0 0",
-                    }}
-                  >
+                  <p className="font-semibold">{alert.message}</p>
+                  <p className="text-sm text-gray-600">
                     {new Date().toLocaleTimeString()}
                   </p>
                 </div>
                 <button
                   onClick={() => removeAlert(alert.id)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#9ca3af",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}
+                  className="text-gray-400 hover:text-gray-600"
                 >
                   ✕
                 </button>
