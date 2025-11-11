@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getPetsByUser, getAllPetData, deletePet } from "../api/api";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -13,28 +13,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    fetchPets();
-  }, []);
-
-  const fetchPets = async () => {
-    try {
-      const res = await getPetsByUser();
-      const petsData = res.data.pets || [];
-      setPets(petsData);
-
-      if (petsData.length > 0) {
-        setSelectedPet(petsData[0]);
-        await fetchPetData(petsData[0]._id);
-      }
-    } catch (err) {
-      console.error("Error loading pets:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPetData = async (petId) => {
+  const fetchPetData = useCallback(async (petId) => {
     try {
       const res = await getAllPetData(petId);
       const data = res.data.data || [];
@@ -67,7 +46,28 @@ function Dashboard() {
       ];
       setPetData(sampleData);
     }
-  };
+  }, []);
+
+  const fetchPets = useCallback(async () => {
+    try {
+      const res = await getPetsByUser();
+      const petsData = res.data.pets || [];
+      setPets(petsData);
+
+      if (petsData.length > 0) {
+        setSelectedPet(petsData[0]);
+        await fetchPetData(petsData[0]._id);
+      }
+    } catch (err) {
+      console.error("Error loading pets:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchPetData]);
+
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
 
   const handlePetSelect = async (pet) => {
     setSelectedPet(pet);
