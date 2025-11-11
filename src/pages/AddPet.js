@@ -19,10 +19,10 @@ function AddPet() {
 
     try {
       await addPet(form);
-      alert("✅ Thêm pet thành công!");
+      alert("✅ Pet added successfully!");
       navigate("/dashboard");
     } catch (err) {
-      alert("❌ Lỗi khi thêm pet. Vui lòng thử lại.");
+      alert("❌ Error adding pet. Please try again.");
       console.error("Error:", err);
     } finally {
       setLoading(false);
@@ -33,31 +33,31 @@ function AddPet() {
     <>
       <Navbar />
       <div className="container">
-        <h2>Thêm Pet Mới</h2>
-        <form onSubmit={handleSubmit} className="pet-form">
+        <h2>Add New Pet</h2>
+        <form onSubmit={handleSubmit}>
           <input
-            placeholder="Tên Pet"
+            placeholder="Pet Name"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
             disabled={loading}
           />
           <input
-            placeholder="Loài (chó, mèo, chim, ...)"
+            placeholder="Species (dog, cat, bird, etc.)"
             value={form.species}
             onChange={(e) => setForm({ ...form, species: e.target.value })}
             required
             disabled={loading}
           />
           <input
-            placeholder="Giống"
+            placeholder="Breed"
             value={form.breed}
             onChange={(e) => setForm({ ...form, breed: e.target.value })}
             required
             disabled={loading}
           />
           <input
-            placeholder="Tuổi (năm)"
+            placeholder="Age (years)"
             type="number"
             min="0"
             max="50"
@@ -67,7 +67,7 @@ function AddPet() {
             disabled={loading}
           />
           <button type="submit" disabled={loading}>
-            {loading ? "Đang thêm..." : "Thêm Pet"}
+            {loading ? "Adding Pet..." : "Add Pet"}
           </button>
         </form>
       </div>

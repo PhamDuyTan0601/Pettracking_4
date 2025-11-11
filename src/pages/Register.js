@@ -16,13 +16,13 @@ function Register() {
     try {
       const res = await registerUser({ name, email, password });
       if (res.data.success) {
-        alert("✅ Tạo tài khoản thành công!");
+        alert("✅ Account created successfully!");
         navigate("/login");
       } else {
         alert(res.data.message);
       }
     } catch (err) {
-      alert("❌ Tạo tài khoản thất bại. Vui lòng thử lại.");
+      alert("❌ Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -30,10 +30,10 @@ function Register() {
 
   return (
     <div className="auth-container">
-      <h2>Tạo Tài Khoản</h2>
+      <h2>Create Account</h2>
       <form onSubmit={handleSubmit}>
         <input
-          placeholder="Họ và tên"
+          placeholder="Full Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -48,7 +48,7 @@ function Register() {
           disabled={loading}
         />
         <input
-          placeholder="Mật khẩu (ít nhất 6 ký tự)"
+          placeholder="Password (min 6 characters)"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -56,11 +56,11 @@ function Register() {
           disabled={loading}
         />
         <button type="submit" disabled={loading}>
-          {loading ? "Đang tạo tài khoản..." : "Đăng ký"}
+          {loading ? "Creating Account..." : "Register"}
         </button>
       </form>
       <p>
-        <Link to="/login">Đã có tài khoản? Đăng nhập</Link>
+        <Link to="/login">Already have an account? Login</Link>
       </p>
     </div>
   );

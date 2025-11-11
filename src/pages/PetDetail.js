@@ -17,8 +17,8 @@ function PetDetail() {
         setData(res.data.data);
         setError("");
       } catch (err) {
-        setError("Không thể tải dữ liệu pet");
-        console.error("Lỗi khi lấy dữ liệu pet:", err);
+        setError("Failed to load pet data");
+        console.error("Error fetching pet data:", err);
       } finally {
         setLoading(false);
       }
@@ -30,38 +30,84 @@ function PetDetail() {
     <>
       <Navbar />
       <div className="container">
-        <h2>Dữ Liệu Mới Nhất Của Pet</h2>
+        <h2>Pet Latest Data</h2>
 
-        {loading && <div className="loading">Đang tải...</div>}
+        {loading && <div className="loading">Loading...</div>}
         {error && <div className="error">{error}</div>}
 
         {data ? (
-          <div className="pet-data">
-            <p>
-              <strong>Vĩ độ:</strong> {data.latitude}
+          <div
+            style={{
+              background: "#f7fafc",
+              padding: "20px",
+              borderRadius: "10px",
+              borderLeft: "4px solid #3182ce",
+            }}
+          >
+            <p
+              style={{
+                margin: "10px 0",
+                padding: "8px",
+                background: "white",
+                borderRadius: "6px",
+              }}
+            >
+              <strong>Latitude:</strong> {data.latitude}
             </p>
-            <p>
-              <strong>Kinh độ:</strong> {data.longitude}
+            <p
+              style={{
+                margin: "10px 0",
+                padding: "8px",
+                background: "white",
+                borderRadius: "6px",
+              }}
+            >
+              <strong>Longitude:</strong> {data.longitude}
             </p>
-            <p>
-              <strong>Tốc độ:</strong> {data.speed} m/s
+            <p
+              style={{
+                margin: "10px 0",
+                padding: "8px",
+                background: "white",
+                borderRadius: "6px",
+              }}
+            >
+              <strong>Speed:</strong> {data.speed} m/s
             </p>
-            <p>
-              <strong>Hoạt động:</strong>
-              <span className={`activity ${data.activityType}`}>
-                {data.activityType}
-              </span>
+            <p
+              style={{
+                margin: "10px 0",
+                padding: "8px",
+                background: "white",
+                borderRadius: "6px",
+              }}
+            >
+              <strong>Activity:</strong> {data.activityType}
             </p>
-            <p>
-              <strong>Pin:</strong> {data.batteryLevel}%
+            <p
+              style={{
+                margin: "10px 0",
+                padding: "8px",
+                background: "white",
+                borderRadius: "6px",
+              }}
+            >
+              <strong>Battery:</strong> {data.batteryLevel}%
             </p>
-            <p>
-              <strong>Cập nhật lúc:</strong>{" "}
+            <p
+              style={{
+                margin: "10px 0",
+                padding: "8px",
+                background: "white",
+                borderRadius: "6px",
+              }}
+            >
+              <strong>Last Updated:</strong>{" "}
               {new Date(data.timestamp).toLocaleString()}
             </p>
           </div>
         ) : (
-          !loading && <p>Không có dữ liệu cho pet này.</p>
+          !loading && <p>No data available for this pet.</p>
         )}
       </div>
     </>

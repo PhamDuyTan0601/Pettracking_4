@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { getPetsByUser, getAllPetData, deletePet } from "../api/api";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -13,7 +13,28 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchPetData = useCallback(async (petId) => {
+  useEffect(() => {
+    fetchPets();
+  }, []);
+
+  const fetchPets = async () => {
+    try {
+      const res = await getPetsByUser();
+      const petsData = res.data.pets || [];
+      setPets(petsData);
+
+      if (petsData.length > 0) {
+        setSelectedPet(petsData[0]);
+        await fetchPetData(petsData[0]._id);
+      }
+    } catch (err) {
+      console.error("Error loading pets:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPetData = async (petId) => {
     try {
       const res = await getAllPetData(petId);
       const data = res.data.data || [];
@@ -33,7 +54,7 @@ function Dashboard() {
         setPetData(sampleData);
       }
     } catch (err) {
-      console.error("Lỗi khi lấy dữ liệu pet:", err);
+      console.error("Error fetching pet data:", err);
       const sampleData = [
         {
           latitude: 10.8231,
@@ -46,28 +67,7 @@ function Dashboard() {
       ];
       setPetData(sampleData);
     }
-  }, []);
-
-  const fetchPets = useCallback(async () => {
-    try {
-      const res = await getPetsByUser();
-      const petsData = res.data.pets || [];
-      setPets(petsData);
-
-      if (petsData.length > 0) {
-        setSelectedPet(petsData[0]);
-        await fetchPetData(petsData[0]._id);
-      }
-    } catch (err) {
-      console.error("Lỗi khi tải danh sách pets:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchPetData]);
-
-  useEffect(() => {
-    fetchPets();
-  }, [fetchPets]);
+  };
 
   const handlePetSelect = async (pet) => {
     setSelectedPet(pet);
@@ -102,26 +102,11 @@ function Dashboard() {
 
       alert(`✅ Đã xóa pet "${petName}" thành công!`);
     } catch (error) {
-      console.error("Lỗi khi xóa pet:", error);
-      let errorMessage = "Lỗi không xác định";
-
-      if (error.response) {
-        if (error.response.status === 404) {
-          errorMessage = "Không tìm thấy pet để xóa.";
-        } else if (error.response.status === 403) {
-          errorMessage = "Bạn không có quyền xóa pet này.";
-        } else {
-          errorMessage =
-            error.response.data?.message ||
-            `Lỗi server: ${error.response.status}`;
-        }
-      } else if (error.request) {
-        errorMessage = "Không thể kết nối đến server.";
-      } else {
-        errorMessage = error.message;
-      }
-
-      alert(`❌ Lỗi khi xóa pet: ${errorMessage}`);
+      console.error("Error deleting pet:", error);
+      alert(
+        "❌ Lỗi khi xóa pet: " +
+          (error.response?.data?.message || "Unknown error")
+      );
     } finally {
       setDeleting(false);
     }
@@ -141,7 +126,15 @@ function Dashboard() {
         {loading ? (
           <div className="loading">Đang tải dữ liệu...</div>
         ) : pets.length === 0 ? (
-          <div className="no-pets">
+          <div
+            style={{
+              textAlign: "center",
+              padding: "40px",
+              background: "white",
+              borderRadius: "12px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+            }}
+          >
             <p>Chưa có pet nào. Thêm pet đầu tiên của bạn!</p>
             <Link to="/add-pet">
               <button>Thêm Pet Đầu Tiên</button>
@@ -181,11 +174,15 @@ function Dashboard() {
                   </div>
                 </div>
 
-                <div className="pet-list-section">
-                  <div className="section-header">
-                    <h3>📋 Danh Sách Pets Của Bạn</h3>
-                    <small>Tổng số: {pets.length} pet(s)</small>
-                  </div>
+                <div
+                  style={{
+                    background: "white",
+                    padding: "20px",
+                    borderRadius: "12px",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <h3>📋 Danh Sách Pets Của Bạn</h3>
                   <div className="pets-grid">
                     {pets.map((pet) => (
                       <div
@@ -199,13 +196,44 @@ function Dashboard() {
                           onClick={() => handlePetSelect(pet)}
                           style={{ cursor: "pointer", flex: 1 }}
                         >
-                          <h4>{pet.name}</h4>
-                          <p>
+                          <h4 style={{ margin: "0 0 8px 0", color: "#2d3748" }}>
+                            {pet.name}
+                          </h4>
+                          <p
+                            style={{
+                              margin: "4px 0",
+                              color: "#718096",
+                              fontSize: "14px",
+                            }}
+                          >
                             {pet.species} • {pet.breed}
                           </p>
-                          <p>{pet.age} tuổi</p>
-                          <div className="pet-status">
-                            <span className="status-dot"></span>
+                          <p
+                            style={{
+                              margin: "4px 0",
+                              color: "#718096",
+                              fontSize: "14px",
+                            }}
+                          >
+                            {pet.age} tuổi
+                          </p>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              marginTop: "10px",
+                              fontSize: "14px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: "8px",
+                                height: "8px",
+                                background: "#48bb78",
+                                borderRadius: "50%",
+                              }}
+                            ></span>
                             <span>Đang hoạt động</span>
                           </div>
                         </div>

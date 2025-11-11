@@ -13,55 +13,15 @@ function Navbar() {
   };
 
   return (
-    <nav
-      style={{
-        backgroundColor: "#2b6cb0",
-        color: "white",
-        padding: "10px 20px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
+    <nav>
       <div>
-        <Link
-          to="/dashboard"
-          style={{
-            color: "white",
-            textDecoration: "none",
-            marginRight: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          🏠 Dashboard
-        </Link>
-        <Link
-          to="/add-pet"
-          style={{
-            color: "white",
-            textDecoration: "none",
-            marginRight: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          ➕ Add Pet
-        </Link>
-        <Link
-          to="/devices"
-          style={{
-            color: "white",
-            textDecoration: "none",
-            fontWeight: "bold",
-          }}
-        >
-          📱 Devices
-        </Link>
+        <Link to="/dashboard">🏠 Dashboard</Link>
+        <Link to="/add-pet">➕ Add Pet</Link>
+        <Link to="/devices">📱 Devices</Link>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-        {user.name && (
-          <span style={{ fontSize: "14px" }}>👋 Hello, {user.name}</span>
-        )}
+        {user.name && <span>👋 Hello, {user.name}</span>}
         {token && (
           <button
             onClick={handleLogout}
@@ -72,7 +32,6 @@ function Navbar() {
               borderRadius: "6px",
               color: "white",
               cursor: "pointer",
-              fontSize: "14px",
             }}
           >
             🚪 Logout
