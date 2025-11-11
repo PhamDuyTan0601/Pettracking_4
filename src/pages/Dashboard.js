@@ -33,7 +33,7 @@ function Dashboard() {
         setPetData(sampleData);
       }
     } catch (err) {
-      console.error("Error fetching pet data:", err);
+      console.error("Lỗi khi lấy dữ liệu pet:", err);
       const sampleData = [
         {
           latitude: 10.8231,
@@ -59,7 +59,7 @@ function Dashboard() {
         await fetchPetData(petsData[0]._id);
       }
     } catch (err) {
-      console.error("Error loading pets:", err);
+      console.error("Lỗi khi tải danh sách pets:", err);
     } finally {
       setLoading(false);
     }
@@ -85,14 +85,11 @@ function Dashboard() {
 
     setDeleting(true);
     try {
-      // Gọi API xóa pet từ backend
       await deletePet(petId);
 
-      // Cập nhật danh sách pets
       const updatedPets = pets.filter((pet) => pet._id !== petId);
       setPets(updatedPets);
 
-      // Nếu pet đang được chọn bị xóa, chọn pet khác
       if (selectedPet && selectedPet._id === petId) {
         if (updatedPets.length > 0) {
           setSelectedPet(updatedPets[0]);
@@ -105,8 +102,7 @@ function Dashboard() {
 
       alert(`✅ Đã xóa pet "${petName}" thành công!`);
     } catch (error) {
-      console.error("Error deleting pet:", error);
-
+      console.error("Lỗi khi xóa pet:", error);
       let errorMessage = "Lỗi không xác định";
 
       if (error.response) {
@@ -134,7 +130,7 @@ function Dashboard() {
   return (
     <>
       <Navbar />
-      <div className="container" style={{ maxWidth: "1200px" }}>
+      <div className="container">
         <div className="dashboard-header">
           <h2>🐾 Dashboard Theo Dõi Pet</h2>
           <Link to="/add-pet">
@@ -153,7 +149,6 @@ function Dashboard() {
           </div>
         ) : (
           <>
-            {/* Select Pet */}
             <div className="pet-selector">
               <label>Chọn Pet để theo dõi:</label>
               <select
@@ -173,10 +168,8 @@ function Dashboard() {
 
             {selectedPet && (
               <>
-                {/* Stats Cards */}
                 <DashboardStats petData={petData} selectedPet={selectedPet} />
 
-                {/* Map and Alerts Grid */}
                 <div className="grid-layout">
                   <div className="map-section">
                     <h3>🗺️ Bản Đồ Theo Dõi Thời Gian Thực</h3>
@@ -188,7 +181,6 @@ function Dashboard() {
                   </div>
                 </div>
 
-                {/* Pet List */}
                 <div className="pet-list-section">
                   <div className="section-header">
                     <h3>📋 Danh Sách Pets Của Bạn</h3>

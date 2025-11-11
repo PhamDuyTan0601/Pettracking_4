@@ -15,13 +15,13 @@ function Login() {
     try {
       const res = await loginUser({ email, password });
       if (res.data.success) {
-        alert("✅ Login successful!");
+        alert("✅ Đăng nhập thành công!");
         navigate("/dashboard");
       } else {
         alert(res.data.message);
       }
     } catch (err) {
-      alert("❌ Login failed. Please check your credentials.");
+      alert("❌ Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.");
     } finally {
       setLoading(false);
     }
@@ -29,7 +29,7 @@ function Login() {
 
   return (
     <div className="auth-container">
-      <h2>Login to Pet Tracker</h2>
+      <h2>Đăng nhập Pet Tracker</h2>
       <form onSubmit={handleSubmit}>
         <input
           placeholder="Email"
@@ -40,7 +40,7 @@ function Login() {
           disabled={loading}
         />
         <input
-          placeholder="Password"
+          placeholder="Mật khẩu"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -48,12 +48,11 @@ function Login() {
           disabled={loading}
         />
         <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Đang đăng nhập..." : "Đăng nhập"}
         </button>
       </form>
       <p>
-        <Link to="/register">Create new account</Link>
-        {/* ĐÃ BỎ link forgot password */}
+        <Link to="/register">Tạo tài khoản mới</Link>
       </p>
     </div>
   );

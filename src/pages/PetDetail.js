@@ -17,8 +17,8 @@ function PetDetail() {
         setData(res.data.data);
         setError("");
       } catch (err) {
-        setError("Failed to load pet data");
-        console.error("Error fetching pet data:", err);
+        setError("Không thể tải dữ liệu pet");
+        console.error("Lỗi khi lấy dữ liệu pet:", err);
       } finally {
         setLoading(false);
       }
@@ -30,38 +30,38 @@ function PetDetail() {
     <>
       <Navbar />
       <div className="container">
-        <h2>Pet Latest Data</h2>
+        <h2>Dữ Liệu Mới Nhất Của Pet</h2>
 
-        {loading && <div className="loading">Loading...</div>}
+        {loading && <div className="loading">Đang tải...</div>}
         {error && <div className="error">{error}</div>}
 
         {data ? (
           <div className="pet-data">
             <p>
-              <strong>Latitude:</strong> {data.latitude}
+              <strong>Vĩ độ:</strong> {data.latitude}
             </p>
             <p>
-              <strong>Longitude:</strong> {data.longitude}
+              <strong>Kinh độ:</strong> {data.longitude}
             </p>
             <p>
-              <strong>Speed:</strong> {data.speed} m/s
+              <strong>Tốc độ:</strong> {data.speed} m/s
             </p>
             <p>
-              <strong>Activity:</strong>
+              <strong>Hoạt động:</strong>
               <span className={`activity ${data.activityType}`}>
                 {data.activityType}
               </span>
             </p>
             <p>
-              <strong>Battery:</strong> {data.batteryLevel}%
+              <strong>Pin:</strong> {data.batteryLevel}%
             </p>
             <p>
-              <strong>Last Updated:</strong>{" "}
+              <strong>Cập nhật lúc:</strong>{" "}
               {new Date(data.timestamp).toLocaleString()}
             </p>
           </div>
         ) : (
-          !loading && <p>No data available for this pet.</p>
+          !loading && <p>Không có dữ liệu cho pet này.</p>
         )}
       </div>
     </>
